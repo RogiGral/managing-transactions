@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -28,44 +29,42 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee getEmployee(Long id) {
-        return employeeRepository.getReferenceById(id);
+    public Employee getEmployee(String uuid) {
+        return employeeRepository.findByUuid(uuid);
     }
 
     @Override
-    public Employee addEmployee(String firstName, String lastName, String gender, String dob, String email) {
-        Employee employee = new Employee();
-        employee.setFirstName(firstName);
-        employee.setLastName(lastName);
-        employee.setGender(gender);
-        employee.setEmail(email);
-        employee.setDob(dob);
-        employeeRepository.save(employee);
-        return employee;
-    }
-
-    @Override
-    public Employee updateEmployee(Long id, String firstName, String lastName, String gender, String dob, String email) throws Exception {
-        Employee employee = findemployeeById(id);
-        employee.setFirstName(firstName);
-        employee.setLastName(lastName);
-        employee.setGender(gender);
-        employee.setEmail(email);
-        employee.setDob(dob);
-        employeeRepository.save(employee);
-        return null;
-    }
-
-    @Override
-    public void deleteEmployee(Long id) {
-        employeeRepository.deleteById(id);
-    }
-
-    private Employee findemployeeById(Long id) throws Exception {
-        Employee employee = employeeRepository.getReferenceById(id);
-        if(employee == null){
-            throw new Exception("NO_WORKOUT_FOUND_BY_ID"+id);
+    public Employee createUpdateEmployee(Employee employee, String uuid) {
+        Employee foundEmployee = employeeRepository.findByUuid(uuid);
+        if(foundEmployee == null){
+            if(employeeRepository.findByEmail(employee.getEmail()) != null){
+                throw new RuntimeException("Email must be unique");
+            }
+            String newUuid = UUID.randomUUID().toString();
+            employee.setUuid(newUuid);
+            employeeRepository.save(employee);
+        } else {
+            if(employeeRepository.findByEmail(employee.getEmail()) != null){
+                throw new RuntimeException("Email must be unique");
+            }
+            foundEmployee.setEmail(employee.getEmail());
+            foundEmployee.setGender(employee.getGender());
+            foundEmployee.setFirstName(employee.getFirstName());
+            foundEmployee.setLastName(employee.getLastName());
+            foundEmployee.setDob(employee.getDob());
+            employeeRepository.save(foundEmployee);
         }
+
         return employee;
+    }
+
+    @Override
+    public boolean isEmployeeExist(String uuid) {
+        return employeeRepository.existsEmployeeByUuid(uuid);
+    }
+
+    @Override
+    public void deleteEmployee(String uuid) {
+        employeeRepository.deleteByUuid(uuid);
     }
 }

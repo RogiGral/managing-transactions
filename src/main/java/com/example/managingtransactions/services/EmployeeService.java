@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface EmployeeService {
     List<Employee> getAllEmployees();
-    Employee getEmployee(Long id);
-    Employee addEmployee(String firstName, String lastName,String gender, String dob, String email);
-    Employee updateEmployee(Long id, String firstName, String lastName,String gender, String dob, String email) throws Exception;
-    void deleteEmployee(Long id);
+    Employee getEmployee(String uuid);
+    Employee createUpdateEmployee(Employee employee, String uuid);
+    boolean isEmployeeExist(String uuid);
+    void deleteEmployee(String uuid);
 }

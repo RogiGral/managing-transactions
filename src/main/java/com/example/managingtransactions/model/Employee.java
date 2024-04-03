@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "employees")
 @NoArgsConstructor
@@ -18,7 +20,8 @@ public class Employee {
     @SequenceGenerator(name = "employee_generator_name", sequenceName = "employee_sequence_name", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
-
+    @Column(nullable = false, unique = true)
+    private String uuid;
     private String firstName;
     private String lastName;
     private String gender;

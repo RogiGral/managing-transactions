@@ -22,31 +22,19 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    @PostMapping("/add")
+    @PutMapping(path = "/{uuid}")
     public ResponseEntity<Employee> addNewEmployee(
-            @RequestParam("firstName") String firstName,
-            @RequestParam("lastName") String lastName,
-            @RequestParam("gender") String gender,
-            @RequestParam("dob") String dob,
-            @RequestParam("email") String email
+            @PathVariable final String uuid,
+            @RequestBody final Employee employee
     ){
-        Employee newEmployee = employeeService.addEmployee(firstName, lastName, gender, dob, email);
-        return new ResponseEntity<>(newEmployee, HttpStatus.OK);
-    }
-    @PostMapping("/update")
-    public ResponseEntity<Employee> addNewEmployee(
-            @RequestParam(value = "id") Long id,
-            @RequestParam(value = "firstName", required = false) String firstName,
-            @RequestParam(value = "lastName", required = false) String lastName,
-            @RequestParam(value = "gender", required = false) String gender,
-            @RequestParam(value = "dob", required = false) String dob,
-            @RequestParam(value = "email", required = false) String email
-    ) throws Exception {
-        if (id == null && firstName == null && lastName == null && gender == null && dob == null && email == null) {
-            throw new IllegalArgumentException("At least one parameter is required.");
+        boolean isEmployeeExist = employeeService.isEmployeeExist(uuid);
+        Employee newEmployee = employeeService.createUpdateEmployee(employee,uuid);
+        if (isEmployeeExist) {
+            return new ResponseEntity<>(newEmployee, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(newEmployee, HttpStatus.CREATED);
         }
-        Employee newEmployee = employeeService.updateEmployee(id, firstName, lastName, gender, dob, email);
-        return new ResponseEntity<>(newEmployee, HttpStatus.OK);
+
     }
 
     @GetMapping("/list")
@@ -54,9 +42,16 @@ public class EmployeeController {
         List<Employee> employees = employeeService.getAllEmployees();
         return new ResponseEntity<>(employees, OK);
     }
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<HttpResponse> deleteEmployee(@PathVariable("id") Long id) {
-        employeeService.deleteEmployee(id);
+    @GetMapping("/{uuid}")
+    public ResponseEntity<Employee> getEmployee(
+            @PathVariable final String uuid
+    ) {
+        Employee employee = employeeService.getEmployee(uuid);
+        return new ResponseEntity<>(employee, OK);
+    }
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<HttpResponse> deleteEmployee(@PathVariable("uuid") String uuid) {
+        employeeService.deleteEmployee(uuid);
         return response(OK, "EMPLOYEE_DELETED_SUCCESSFULLY");
     }
 
