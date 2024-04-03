@@ -31,7 +31,7 @@ public class EmployeeController {
             @RequestParam("email") String email
     ){
         Employee newEmployee = employeeService.addEmployee(firstName, lastName, gender, dob, email);
-        return new ResponseEntity<>(newEmployee, HttpStatus.OK);
+        return new ResponseEntity<>(newEmployee, HttpStatus.CREATED);
     }
     @PostMapping("/update")
     public ResponseEntity<Employee> addNewEmployee(
@@ -53,6 +53,11 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> getAllEmployees() {
         List<Employee> employees = employeeService.getAllEmployees();
         return new ResponseEntity<>(employees, OK);
+    }
+    @GetMapping("/list/{id}")
+    public ResponseEntity<Employee> getEmployee(@PathVariable("id") Long id) {
+        Employee employee = employeeService.getEmployee(id);
+        return new ResponseEntity<>(employee, OK);
     }
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<HttpResponse> deleteEmployee(@PathVariable("id") Long id) {
