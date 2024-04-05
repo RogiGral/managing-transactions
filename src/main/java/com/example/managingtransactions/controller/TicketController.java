@@ -53,7 +53,7 @@ public class TicketController {
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpResponse> deleteTicket(@PathVariable("id") String id) {
-        ticketService.deleteTikcet(id);
+        ticketService.deleteTicket(id);
         return response(OK, "TICKET_DELETED_SUCCESSFULLY");
     }
 

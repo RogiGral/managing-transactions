@@ -16,8 +16,8 @@ import java.util.UUID;
 @Transactional
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private EmployeeRepository employeeRepository;
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    private final EmployeeRepository employeeRepository;
 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository){
         this.employeeRepository = employeeRepository;
@@ -34,37 +34,42 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee createUpdateEmployee(Employee employee, String uuid) {
-        Employee foundEmployee = employeeRepository.findByUuid(uuid);
-        if(foundEmployee == null){
-            if(employeeRepository.findByEmail(employee.getEmail()) != null){
-                throw new RuntimeException("Email must be unique");
-            }
-            String newUuid = UUID.randomUUID().toString();
-            employee.setUuid(newUuid);
-            employeeRepository.save(employee);
-        } else {
-            if(employeeRepository.findByEmail(employee.getEmail()) != null){
-                throw new RuntimeException("Email must be unique");
-            }
-            foundEmployee.setEmail(employee.getEmail());
-            foundEmployee.setGender(employee.getGender());
-            foundEmployee.setFirstName(employee.getFirstName());
-            foundEmployee.setLastName(employee.getLastName());
-            foundEmployee.setDob(employee.getDob());
-            employeeRepository.save(foundEmployee);
+    public Employee createEmployee(Employee employee) {
+        if(employeeRepository.findByEmail(employee.getEmail()) != null){
+            throw new RuntimeException("Email must be unique");
         }
-
-        return employee;
+        String newUuid = UUID.randomUUID().toString();
+        employee.setUuid(newUuid);
+        Employee savedEmployee =  employeeRepository.save(employee);
+        return savedEmployee;
     }
 
     @Override
-    public boolean isEmployeeExist(String uuid) {
-        return employeeRepository.existsEmployeeByUuid(uuid);
+    public Employee updateEmployee(Employee employee, String uuid) {
+        Employee foundEmployee = employeeRepository.findByUuid(uuid);
+        if(foundEmployee == null){
+            throw new RuntimeException("Employee does not exists");
+        }
+        else if(employeeRepository.findByEmail(employee.getEmail()) != null){
+            throw new RuntimeException("Email must be unique");
+        } else {
+            foundEmployee.setEmail(employee.getEmail() != null ? employee.getEmail() : foundEmployee.getEmail());
+            foundEmployee.setGender(employee.getGender() != null ? employee.getGender() : foundEmployee.getGender());
+            foundEmployee.setFirstName(employee.getFirstName() != null ? employee.getFirstName() : foundEmployee.getFirstName());
+            foundEmployee.setLastName(employee.getLastName() != null ? employee.getLastName() : foundEmployee.getLastName());
+            foundEmployee.setDob(employee.getDob() != null ? employee.getDob() : foundEmployee.getDob());
+            employeeRepository.save(foundEmployee);
+        }
+        return foundEmployee;
     }
 
     @Override
     public void deleteEmployee(String uuid) {
-        employeeRepository.deleteByUuid(uuid);
+        Employee employee = employeeRepository.findByUuid(uuid);
+        if(employee == null){
+            throw new RuntimeException("Employee does not exists");
+        } else {
+         employeeRepository.delete(employee);
+        }
     }
 }

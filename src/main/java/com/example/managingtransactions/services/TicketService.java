@@ -10,7 +10,6 @@ public interface TicketService {
     List<Ticket> getAllTickets();
     Optional<Ticket> getTicket(String id);
     Ticket addOrUpdateTicket(Ticket ticket);
-    void deleteTicket(String id);
-
     boolean isTicketExists(Ticket ticket);
+    void deleteTicket(String id);
 }

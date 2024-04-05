@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 public class TicketServiceImpl implements TicketService {
 
-    private Logger LOGGER = LoggerFactory.getLogger(getClass());
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     private final EmployeeRepository employeeRepository;
     private final TicketRepository ticketRepository;
@@ -60,17 +60,15 @@ public class TicketServiceImpl implements TicketService {
         return ticketRepository.findTicketById(id);
     }
 
-    @Override
-    public void deleteTicket(String id) {
-        try {
-            ticketRepository.deleteById(id);
-        } catch(final EmptyResultDataAccessException ex) {
-            LOGGER.debug("Attempted to delete non-existing book", ex);
-        }
-    }
+
 
     @Override
     public boolean isTicketExists(Ticket ticket) {
         return ticketRepository.existsTicketById(ticket.getId());
+    }
+
+    @Override
+    public void deleteTicket(String id) {
+        ticketRepository.deleteById(id);
     }
 }
