@@ -11,18 +11,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "TICKETS")
-public class Ticket {
+@Table(name = "TICKET")
+public class Ticket extends AuditRecord {
     @Id
-    @Column(name = "id", nullable = false)
+    @Basic(optional = false)
+    @Column(name = "ID")
     private String id;
-
+    @Column(name = "TITLE")
     private String title;
+    @Column(name = "DESCRIPTION")
     private String description;
-    private String creationDate;
-    private String endDate;
 
-    @ManyToOne
-    @JoinColumn(name="employee_id")
+    @JoinColumn(name = "EMPLOYEE", referencedColumnName = "ID")
+    @ManyToOne(fetch = FetchType.EAGER)
     private Employee employee;
+
 }

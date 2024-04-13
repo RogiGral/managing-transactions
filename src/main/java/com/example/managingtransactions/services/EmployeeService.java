@@ -7,7 +7,7 @@ import java.util.List;
 public interface EmployeeService {
     List<Employee> getAllEmployees();
     Employee getEmployee(String uuid);
-    Employee createUpdateEmployee(Employee employee, String uuid);
-    boolean isEmployeeExist(String uuid);
+    Employee createEmployee(Employee employee);
+    Employee updateEmployee(Employee employee, String uuid);
     void deleteEmployee(String uuid);
 }
