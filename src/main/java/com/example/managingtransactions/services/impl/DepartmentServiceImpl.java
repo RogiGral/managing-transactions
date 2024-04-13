@@ -1,5 +1,6 @@
 package com.example.managingtransactions.services.impl;
 
+import com.example.managingtransactions.exceptions.model.DepartmentNotFound;
 import com.example.managingtransactions.model.Department;
 import com.example.managingtransactions.model.DepartmentType;
 import com.example.managingtransactions.model.Employee;
@@ -51,9 +52,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Department updateDepartment(Department department, Long id) {
+    public Department updateDepartment(Department department, Long id) throws DepartmentNotFound {
         Department existingDepartment = departmentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Department not found with id: " + id));
+                .orElseThrow(() -> new DepartmentNotFound("Department not found with id: " + id));
 
         DepartmentType departmentType = departmentTypeRepository.findById(department.getDepartmentType().getId())
                 .orElseGet(() -> departmentTypeRepository.save(department.getDepartmentType()));

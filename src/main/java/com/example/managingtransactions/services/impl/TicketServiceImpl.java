@@ -1,6 +1,8 @@
 package com.example.managingtransactions.services.impl;
 
 import com.example.managingtransactions.enumeration.TicketStatus;
+import com.example.managingtransactions.exceptions.model.EmployeeNotFound;
+import com.example.managingtransactions.exceptions.model.TicketNotFound;
 import com.example.managingtransactions.model.Employee;
 import com.example.managingtransactions.model.Ticket;
 import com.example.managingtransactions.repository.EmployeeRepository;
@@ -54,9 +56,9 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Ticket updateTicket(Ticket ticket, Long id) {
+    public Ticket updateTicket(Ticket ticket, Long id) throws TicketNotFound {
         Ticket foundTicket = ticketRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Tikcet with id: "+id+" not found"));
+                .orElseThrow(()-> new TicketNotFound("Tikcet with id: "+id+" not found"));
 
         foundTicket.setTitle(ticket.getTitle());
         foundTicket.setDescription(ticket.getDescription());
@@ -65,13 +67,13 @@ public class TicketServiceImpl implements TicketService {
         return ticketRepository.save(foundTicket);
     }
     @Override
-    public Ticket addEmployeeToTicket(Long ticketId, String employeeUuid) {
+    public Ticket addEmployeeToTicket(Long ticketId, String employeeUuid) throws EmployeeNotFound, TicketNotFound {
         Ticket foundTicket = ticketRepository.findById(ticketId)
-                .orElseThrow(()-> new RuntimeException("Tikcet with id: "+ticketId+" not found"));
+                .orElseThrow(()-> new TicketNotFound("Tikcet with id: "+ticketId+" not found"));
 
         Employee employee = employeeRepository
                 .findByUuid(employeeUuid)
-                .orElseThrow(()-> new RuntimeException("Employee with id: "+employeeUuid+" not found"));
+                .orElseThrow(()-> new EmployeeNotFound("Employee with id: "+employeeUuid+" not found"));
 
         foundTicket.setEmployee(employee);
 

@@ -1,5 +1,7 @@
 package com.example.managingtransactions.services;
 
+import com.example.managingtransactions.exceptions.model.EmployeeNotFound;
+import com.example.managingtransactions.exceptions.model.TicketNotFound;
 import com.example.managingtransactions.model.Employee;
 import com.example.managingtransactions.model.Ticket;
 
@@ -11,7 +13,7 @@ public interface TicketService {
     Optional<Ticket> getTicket(Long id);
     void deleteTicket(Long id);
     Ticket addTicket(Ticket ticket);
-    Ticket updateTicket(Ticket ticket, Long id);
+    Ticket updateTicket(Ticket ticket, Long id) throws TicketNotFound;
 
-    Ticket addEmployeeToTicket(Long ticketId, String employeeUuid);
+    Ticket addEmployeeToTicket(Long ticketId, String employeeUuid) throws EmployeeNotFound, TicketNotFound;
 }
