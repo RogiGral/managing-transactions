@@ -10,4 +10,5 @@ public interface EmployeeService {
     Employee createEmployee(Employee employee);
     Employee updateEmployee(Employee employee, String uuid);
     void deleteEmployee(String uuid);
+    Employee addDepartmentToEmployee(String uuid, Long departmentId);
 }
