@@ -5,16 +5,17 @@ import com.example.managingtransactions.model.Ticket;
 import com.example.managingtransactions.repository.EmployeeRepository;
 import com.example.managingtransactions.repository.TicketRepository;
 import com.example.managingtransactions.services.TicketService;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class TicketServiceImpl implements TicketService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -28,7 +29,6 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    @Transactional
     public Ticket addOrUpdateTicket(Ticket ticket) {
         if(ticket.getEmployee() == null) {
             throw new RuntimeException("Employee must be provided.");
@@ -51,11 +51,13 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Ticket> getAllTickets() {
         return ticketRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Ticket> getTicket(String id) {
         return ticketRepository.findTicketById(id);
     }

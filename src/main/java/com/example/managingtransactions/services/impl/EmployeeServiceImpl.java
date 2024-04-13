@@ -3,10 +3,10 @@ package com.example.managingtransactions.services.impl;
 import com.example.managingtransactions.model.Employee;
 import com.example.managingtransactions.repository.EmployeeRepository;
 import com.example.managingtransactions.services.EmployeeService;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,11 +24,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Employee getEmployee(String uuid) {
         return employeeRepository.findByUuid(uuid);
     }
@@ -47,20 +49,30 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee updateEmployee(Employee employee, String uuid) {
         Employee foundEmployee = employeeRepository.findByUuid(uuid);
-        if(foundEmployee == null){
-            throw new RuntimeException("Employee does not exists");
+        if (foundEmployee == null) {
+            throw new RuntimeException("Employee does not exist");
         }
-        else if(employeeRepository.findByEmail(employee.getEmail()) != null){
+        Employee existingEmployeeWithEmail = employeeRepository.findByEmail(employee.getEmail());
+        if (existingEmployeeWithEmail != null && !existingEmployeeWithEmail.getUuid().equals(uuid)) {
             throw new RuntimeException("Email must be unique");
-        } else {
-            foundEmployee.setEmail(employee.getEmail() != null ? employee.getEmail() : foundEmployee.getEmail());
-            foundEmployee.setGender(employee.getGender() != null ? employee.getGender() : foundEmployee.getGender());
-            foundEmployee.setFirstName(employee.getFirstName() != null ? employee.getFirstName() : foundEmployee.getFirstName());
-            foundEmployee.setLastName(employee.getLastName() != null ? employee.getLastName() : foundEmployee.getLastName());
-            foundEmployee.setDob(employee.getDob() != null ? employee.getDob() : foundEmployee.getDob());
-            employeeRepository.save(foundEmployee);
         }
-        return foundEmployee;
+        if (employee.getEmail() != null) {
+            foundEmployee.setEmail(employee.getEmail());
+        }
+        if (employee.getGender() != null) {
+            foundEmployee.setGender(employee.getGender());
+        }
+        if (employee.getFirstName() != null) {
+            foundEmployee.setFirstName(employee.getFirstName());
+        }
+        if (employee.getLastName() != null) {
+            foundEmployee.setLastName(employee.getLastName());
+        }
+        if (employee.getDob() != null) {
+            foundEmployee.setDob(employee.getDob());
+        }
+
+        return employeeRepository.save(foundEmployee);
     }
 
     @Override

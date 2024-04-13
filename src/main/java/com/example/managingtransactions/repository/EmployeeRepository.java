@@ -9,7 +9,4 @@ import org.springframework.stereotype.Repository;
 public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     Employee findByEmail(String email);
     Employee findByUuid(String uuid);
-    @Query()
-    void deleteByUuid(String uuid);
-    boolean existsEmployeeByUuid(String uuid);
 }
