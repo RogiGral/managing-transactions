@@ -25,20 +25,33 @@ public class TicketController {
     @Autowired
     private TicketService ticketService;
 
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<Ticket> createUpdateTicket(
-            @PathVariable final String id,
+    @PostMapping()
+    public ResponseEntity<Ticket> createTicket(
             @RequestBody final Ticket ticket){
-        ticket.setId(id);
-        final boolean isTicketExists = ticketService.isTicketExists(ticket);
 
-        Ticket newTicket = ticketService.addOrUpdateTicket(ticket);
-        if (isTicketExists) {
-            return new ResponseEntity<>(newTicket, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(newTicket, HttpStatus.CREATED);
-        }
+        Ticket newTicket = ticketService.addTicket(ticket);
+        return new ResponseEntity<>(newTicket, HttpStatus.CREATED);
+
     }
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<Ticket> updateTicket(
+            @PathVariable final Long id,
+            @RequestBody final Ticket ticket){
+
+        Ticket updatedTicket = ticketService.updateTicket(ticket,id);
+        return new ResponseEntity<>(updatedTicket, HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/add_employee_to_ticket/{employeeUuid}/{ticketId}")
+    public ResponseEntity<Ticket> addEmployeeToTicket(
+            @PathVariable final Long ticketId,
+            @PathVariable final String employeeUuid
+    ){
+        Ticket ticket = ticketService.addEmployeeToTicket(ticketId,employeeUuid);
+        return new ResponseEntity<>(ticket, OK);
+    }
+
 
     @GetMapping()
     public ResponseEntity<List<Ticket>> getAllTickets() {
@@ -46,13 +59,13 @@ public class TicketController {
         return new ResponseEntity<>(tickets, OK);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Ticket> getTicket(@PathVariable("id") String id) {
+    public ResponseEntity<Ticket> getTicket(@PathVariable("id") Long id) {
         final Optional<Ticket> foundTicket = ticketService.getTicket(id);
         return foundTicket.map(ticket -> new ResponseEntity<>(ticket, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpResponse> deleteTicket(@PathVariable("id") String id) {
+    public ResponseEntity<HttpResponse> deleteTicket(@PathVariable("id") Long id) {
         ticketService.deleteTicket(id);
         return response(OK, "TICKET_DELETED_SUCCESSFULLY");
     }

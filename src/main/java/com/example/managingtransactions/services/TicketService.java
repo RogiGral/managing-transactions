@@ -8,8 +8,10 @@ import java.util.Optional;
 
 public interface TicketService {
     List<Ticket> getAllTickets();
-    Optional<Ticket> getTicket(String id);
-    Ticket addOrUpdateTicket(Ticket ticket);
-    boolean isTicketExists(Ticket ticket);
-    void deleteTicket(String id);
+    Optional<Ticket> getTicket(Long id);
+    void deleteTicket(Long id);
+    Ticket addTicket(Ticket ticket);
+    Ticket updateTicket(Ticket ticket, Long id);
+
+    Ticket addEmployeeToTicket(Long ticketId, String employeeUuid);
 }

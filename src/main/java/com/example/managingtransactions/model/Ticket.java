@@ -1,29 +1,31 @@
 package com.example.managingtransactions.model;
 
+import com.example.managingtransactions.enumeration.TicketStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Entity
 @Table(name = "TICKET")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Ticket extends AuditRecord {
     @Id
     @Basic(optional = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TICKET_SEQ")
+    @SequenceGenerator(name = "TICKET_SEQ", sequenceName = "TICKET_SEQ", allocationSize = 1)
     @Column(name = "ID")
-    private String id;
+    private Long id;
     @Column(name = "TITLE")
     private String title;
     @Column(name = "DESCRIPTION")
     private String description;
+    @Column(name = "TICKET_STATUS")
+    private TicketStatus ticketStatus;
 
     @JoinColumn(name = "EMPLOYEE", referencedColumnName = "ID")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(optional = true,fetch = FetchType.EAGER)
     private Employee employee;
 
 }

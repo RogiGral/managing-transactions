@@ -1,10 +1,13 @@
 package com.example.managingtransactions.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "EMPLOYEE")
@@ -28,7 +31,8 @@ public class Employee extends AuditRecord {
     @Column(name = "GENDER")
     private String gender;
     @Column(name = "DATE_OF_BIRTH")
-    private String dob;
+    @JsonFormat(pattern="dd-MM-yyyy")
+    private Date dob;
     @Column(name = "EMAIL", unique = true)
     private String email;
 

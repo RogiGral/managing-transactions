@@ -47,12 +47,21 @@ public class EmployeeController {
     }
 
     @PutMapping(path = "/{uuid}")
-    public ResponseEntity<Employee> addNewEmployee(
+    public ResponseEntity<Employee> updateEmployee(
             @PathVariable final String uuid,
             @RequestBody final Employee employee
     ){
         Employee newEmployee = employeeService.updateEmployee(employee,uuid);
         return new ResponseEntity<>(newEmployee, HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/add_department_to_employee/{departmentId}/{uuid}")
+    public ResponseEntity<Employee> addDepartmentToEmployee(
+            @PathVariable final String uuid,
+            @PathVariable final Long departmentId
+    ){
+        Employee employee = employeeService.addDepartmentToEmployee(uuid,departmentId);
+        return new ResponseEntity<>(employee, OK);
     }
 
     @DeleteMapping("/{uuid}")
