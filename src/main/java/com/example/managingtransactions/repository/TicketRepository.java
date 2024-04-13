@@ -7,8 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface TicketRepository extends JpaRepository<Ticket,Long> {
-    Optional<Ticket> findTicketById(String id);
-    boolean existsTicketById(String id);
-    void deleteById(String id);
+public interface TicketRepository extends JpaRepository<Ticket,Long> { ;
 }

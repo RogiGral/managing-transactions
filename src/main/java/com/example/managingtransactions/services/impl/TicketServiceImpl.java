@@ -1,5 +1,6 @@
 package com.example.managingtransactions.services.impl;
 
+import com.example.managingtransactions.enumeration.TicketStatus;
 import com.example.managingtransactions.model.Employee;
 import com.example.managingtransactions.model.Ticket;
 import com.example.managingtransactions.repository.EmployeeRepository;
@@ -29,28 +30,6 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Ticket addOrUpdateTicket(Ticket ticket) {
-        if(ticket.getEmployee() == null) {
-            throw new RuntimeException("Employee must be provided.");
-        }
-
-        final Employee employeeOnTicket = ticket.getEmployee();
-        ticket.setEmployee(null);
-        final Ticket savedTicket = ticketRepository.save(ticket);
-
-        if(employeeOnTicket.getId() == null){
-            final Employee employee = employeeRepository.save(employeeOnTicket);
-            savedTicket.setEmployee(employee);
-        } else {
-            final Employee employee = employeeRepository.findById(employeeOnTicket.getId()).orElseThrow(()-> new RuntimeException("Employee not found"));
-            savedTicket.setEmployee(employee);
-        }
-
-        return ticketRepository.save(savedTicket);
-
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public List<Ticket> getAllTickets() {
         return ticketRepository.findAll();
@@ -58,19 +37,45 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Ticket> getTicket(String id) {
-        return ticketRepository.findTicketById(id);
-    }
-
-
-
-    @Override
-    public boolean isTicketExists(Ticket ticket) {
-        return ticketRepository.existsTicketById(ticket.getId());
+    public Optional<Ticket> getTicket(Long id) {
+        return ticketRepository.findById(id);
     }
 
     @Override
-    public void deleteTicket(String id) {
+    public void deleteTicket(Long id) {
         ticketRepository.deleteById(id);
     }
+
+    @Override
+    public Ticket addTicket(Ticket ticket) {
+        ticket.setEmployee(null);
+        Ticket savedTicket =  ticketRepository.save(ticket);
+        return savedTicket;
+    }
+
+    @Override
+    public Ticket updateTicket(Ticket ticket, Long id) {
+        Ticket foundTicket = ticketRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Tikcet with id: "+id+" not found"));
+
+        foundTicket.setTitle(ticket.getTitle());
+        foundTicket.setDescription(ticket.getDescription());
+        foundTicket.setTicketStatus(ticket.getTicketStatus());
+
+        return ticketRepository.save(foundTicket);
+    }
+    @Override
+    public Ticket addEmployeeToTicket(Long ticketId, String employeeUuid) {
+        Ticket foundTicket = ticketRepository.findById(ticketId)
+                .orElseThrow(()-> new RuntimeException("Tikcet with id: "+ticketId+" not found"));
+
+        Employee employee = employeeRepository
+                .findByUuid(employeeUuid)
+                .orElseThrow(()-> new RuntimeException("Employee with id: "+employeeUuid+" not found"));
+
+        foundTicket.setEmployee(employee);
+
+        return ticketRepository.save(foundTicket);
+    }
+
 }
