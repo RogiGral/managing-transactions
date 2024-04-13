@@ -1,5 +1,7 @@
 package com.example.managingtransactions.controller;
 
+import com.example.managingtransactions.exceptions.model.DepartmentNotFound;
+import com.example.managingtransactions.exceptions.model.EmployeeNotFound;
 import com.example.managingtransactions.model.Employee;
 import com.example.managingtransactions.model.HttpResponse;
 import com.example.managingtransactions.services.EmployeeService;
@@ -50,7 +52,7 @@ public class EmployeeController {
     public ResponseEntity<Employee> updateEmployee(
             @PathVariable final String uuid,
             @RequestBody final Employee employee
-    ){
+    ) throws EmployeeNotFound {
         Employee newEmployee = employeeService.updateEmployee(employee,uuid);
         return new ResponseEntity<>(newEmployee, HttpStatus.OK);
     }
@@ -59,13 +61,13 @@ public class EmployeeController {
     public ResponseEntity<Employee> addDepartmentToEmployee(
             @PathVariable final String uuid,
             @PathVariable final Long departmentId
-    ){
+    ) throws EmployeeNotFound, DepartmentNotFound {
         Employee employee = employeeService.addDepartmentToEmployee(uuid,departmentId);
         return new ResponseEntity<>(employee, OK);
     }
 
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<HttpResponse> deleteEmployee(@PathVariable("uuid") String uuid) {
+    public ResponseEntity<HttpResponse> deleteEmployee(@PathVariable("uuid") String uuid) throws EmployeeNotFound {
         employeeService.deleteEmployee(uuid);
         return response(OK, "EMPLOYEE_DELETED_SUCCESSFULLY");
     }

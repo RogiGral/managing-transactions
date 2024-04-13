@@ -1,5 +1,7 @@
 package com.example.managingtransactions.services.impl;
 
+import com.example.managingtransactions.exceptions.model.DepartmentNotFound;
+import com.example.managingtransactions.exceptions.model.EmployeeNotFound;
 import com.example.managingtransactions.model.Department;
 import com.example.managingtransactions.model.Employee;
 import com.example.managingtransactions.repository.DepartmentRepository;
@@ -52,10 +54,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee updateEmployee(Employee employee, String uuid) {
+    public Employee updateEmployee(Employee employee, String uuid) throws EmployeeNotFound {
 
         Employee foundEmployee = employeeRepository.findByUuid(uuid)
-                .orElseThrow(()-> new RuntimeException("Employee with id: "+uuid+" not found"));
+                .orElseThrow(()-> new EmployeeNotFound("Employee with id: "+uuid+" not found"));
 
         Employee existingEmployeeWithEmail = employeeRepository.findByEmail(employee.getEmail());
         if (existingEmployeeWithEmail != null && !existingEmployeeWithEmail.getUuid().equals(uuid)) {
@@ -72,20 +74,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void deleteEmployee(String uuid) {
+    public void deleteEmployee(String uuid) throws EmployeeNotFound {
         Employee employee = employeeRepository.findByUuid(uuid)
-                .orElseThrow(()-> new RuntimeException("Employee with id: "+uuid+" not found"));
+                .orElseThrow(()-> new EmployeeNotFound("Employee with id: "+uuid+" not found"));
          employeeRepository.delete(employee);
     }
 
     @Override
-    public Employee addDepartmentToEmployee(String uuid, Long departmentId) {
+    public Employee addDepartmentToEmployee(String uuid, Long departmentId) throws DepartmentNotFound, EmployeeNotFound {
         Department department = departmentRepository
                 .findById(departmentId)
-                .orElseThrow(()-> new RuntimeException("Department with id: "+departmentId+" not found"));
+                .orElseThrow(()-> new DepartmentNotFound("Department with id: "+departmentId+" not found"));
         Employee employee = employeeRepository
                 .findByUuid(uuid)
-                .orElseThrow(()-> new RuntimeException("Employee with id: "+uuid+" not found"));
+                .orElseThrow(()-> new EmployeeNotFound("Employee with id: "+uuid+" not found"));
         employee.setDepartment(department);
         employeeRepository.save(employee);
         return employeeRepository.save(employee);

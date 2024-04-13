@@ -1,5 +1,7 @@
 package com.example.managingtransactions.controller;
 
+import com.example.managingtransactions.exceptions.model.EmployeeNotFound;
+import com.example.managingtransactions.exceptions.model.TicketNotFound;
 import com.example.managingtransactions.model.Employee;
 import com.example.managingtransactions.model.HttpResponse;
 import com.example.managingtransactions.model.Ticket;
@@ -37,7 +39,7 @@ public class TicketController {
     @PutMapping(path = "/{id}")
     public ResponseEntity<Ticket> updateTicket(
             @PathVariable final Long id,
-            @RequestBody final Ticket ticket){
+            @RequestBody final Ticket ticket) throws TicketNotFound {
 
         Ticket updatedTicket = ticketService.updateTicket(ticket,id);
         return new ResponseEntity<>(updatedTicket, HttpStatus.OK);
@@ -47,7 +49,7 @@ public class TicketController {
     public ResponseEntity<Ticket> addEmployeeToTicket(
             @PathVariable final Long ticketId,
             @PathVariable final String employeeUuid
-    ){
+    ) throws TicketNotFound, EmployeeNotFound {
         Ticket ticket = ticketService.addEmployeeToTicket(ticketId,employeeUuid);
         return new ResponseEntity<>(ticket, OK);
     }

@@ -3,6 +3,7 @@ package com.example.managingtransactions.services;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.managingtransactions.exceptions.model.DepartmentNotFound;
 import com.example.managingtransactions.services.impl.DepartmentServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -59,7 +60,7 @@ public class DepartmentServiceImplTest {
     }
 
     @Test
-    public void testUpdateDepartment() {
+    public void testUpdateDepartment() throws DepartmentNotFound {
         Long departmentId = 1L;
         Department department = new Department();
         DepartmentType departmentType = new DepartmentType();

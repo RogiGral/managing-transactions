@@ -1,5 +1,6 @@
 package com.example.managingtransactions.controller;
 
+import com.example.managingtransactions.exceptions.model.DepartmentNotFound;
 import com.example.managingtransactions.model.Department;
 import com.example.managingtransactions.model.HttpResponse;
 import com.example.managingtransactions.services.DepartmentService;
@@ -50,7 +51,7 @@ public class DepartmentController {
     public ResponseEntity<Department> addNewDepartment(
             @PathVariable final Long id,
             @RequestBody final Department department
-    ){
+    ) throws DepartmentNotFound {
         Department newDepartment = departmentService.updateDepartment(department,id);
         return new ResponseEntity<>(newDepartment, HttpStatus.OK);
     }
